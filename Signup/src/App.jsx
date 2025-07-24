@@ -34,6 +34,8 @@ function signupReducer(state, action) {
       return { ...state, currentStep: state.currentStep + 1 };
     case 'PREV_STEP':
       return { ...state, currentStep: state.currentStep - 1 };
+    case 'GO_TO_STEP':
+      return { ...state, currentStep: action.payload };
     case 'SET_LOADING':
       return { ...state, isLoading: action.payload };
     case 'SUBMIT_SUCCESS':
@@ -47,13 +49,15 @@ function signupReducer(state, action) {
   }
 }
 
-export const SignupProvider = ({ children }) => {
+// No longer exported
+const SignupProvider = ({ children }) => {
   const [state, dispatch] = useReducer(signupReducer, initialState);
   const value = { state, dispatch };
   return <SignupContext.Provider value={value}>{children}</SignupContext.Provider>;
 };
 
-export const useSignupContext = () => {
+// No longer exported
+const useSignupContext = () => {
   const context = useContext(SignupContext);
   if (context === undefined) {
     throw new Error('useSignupContext must be used within a SignupProvider');
@@ -63,6 +67,7 @@ export const useSignupContext = () => {
 
 
 // --- UTILITY & VALIDATION ---
+// No longer exported
 const validateStep1 = (data) => {
   const errors = {};
   if (!data.firstName.trim()) errors.firstName = 'First name is required.';
@@ -74,6 +79,7 @@ const validateStep1 = (data) => {
   return errors;
 };
 
+// No longer exported
 const validateStep2 = (data) => {
   const errors = {};
   if (!data.address.trim()) errors.address = 'Street address is required.';
@@ -274,11 +280,11 @@ const SignupForm = () => {
 
     if (Object.keys(allErrors).length > 0) {
         dispatch({ type: 'SET_ERRORS', payload: allErrors });
-        // Optionally, navigate to the first step with an error
+        // Navigate to the first step with an error
         if (Object.keys(step1Errors).length > 0) {
-            // dispatch({ type: 'GO_TO_STEP', payload: 1 }); // A reducer action could be added for this
+            dispatch({ type: 'GO_TO_STEP', payload: 1 });
         } else if (Object.keys(step2Errors).length > 0) {
-            // dispatch({ type: 'GO_TO_STEP', payload: 2 });
+            dispatch({ type: 'GO_TO_STEP', payload: 2 });
         }
         return; // Stop submission if there are errors
     }
